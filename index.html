@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 保險監理原型 v2.1</title>
+<title>AI 保險監理原型 v2.2</title>
 <style>
   body {
     background-color: #2c3e50;
@@ -86,7 +86,7 @@
   /* 溫和提示警語 */
   .warning-text {
     font-size: 12px; color: #ff4757; background: #fff0f1; padding: 8px 10px; margin-bottom: 10px; border-radius: 6px;
-    display: none;
+    display: none; /* CSS 預設隱藏，但我們會用 inline style 覆蓋它 */
     animation: fadeIn 0.3s ease;
   }
 
@@ -135,7 +135,7 @@
     
     <div class="toggle-group">
       <div class="toggle-item">
-        <span>🧬 基因檢測報告 (23andMe)</span>
+        <span>🧬 基因檢測報告</span>
         <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
       </div>
       <div class="toggle-item">
@@ -144,9 +144,9 @@
       </div>
       <div class="toggle-item" style="border-bottom:none;">
         <span>🏥 過去 3 年就醫紀錄</span>
-        <label class="switch"><input type="checkbox" id="medical-switch" checked onchange="toggleWarning()"><span class="slider"></span></label>
+        <label class="switch"><input type="checkbox" id="medical-switch" onchange="toggleWarning()"><span class="slider"></span></label>
       </div>
-      <div class="warning-text" id="medical-warning">
+      <div class="warning-text" id="medical-warning" style="display: block;">
         ⚠️ 關閉此項將無法使用「免收據秒賠」，後續理賠需人工審核（約 3-5 工作天）。
       </div>
       <div style="height: 1px; background: #eee; width: 100%;"></div>
@@ -284,6 +284,8 @@
   function toggleWarning() {
     var checkBox = document.getElementById("medical-switch");
     var text = document.getElementById("medical-warning");
+    // 如果勾選 (checked = true)，隱藏警語
+    // 如果取消 (checked = false)，顯示警語
     if (checkBox.checked == true){
       text.style.display = "none";
     } else {
@@ -294,4 +296,3 @@
 
 </body>
 </html>
-
