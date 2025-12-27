@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 保險監理原型展示</title>
+<title>AI 保險監理原型 v2.0</title>
 <style>
   body {
     background-color: #2c3e50;
@@ -33,20 +33,16 @@
     padding: 24px;
     height: 100%;
     box-sizing: border-box;
-    display: none; /* 預設全部隱藏 */
+    display: none;
     flex-direction: column;
     animation: fadeIn 0.4s ease;
     position: relative;
   }
-
-  /* 顯示當前畫面 */
   .screen.active { display: flex; }
 
-  /* 標題與文字 */
   h1 { font-size: 22px; color: #333; margin-bottom: 8px; text-align: center; margin-top: 10px; }
   p { color: #666; line-height: 1.5; text-align: center; font-size: 14px; }
   
-  /* 卡片樣式 */
   .card {
     background: #f8f9fa;
     border-radius: 16px;
@@ -56,7 +52,6 @@
     text-align: left;
   }
 
-  /* 按鈕樣式 */
   .btn {
     background: #2ed573;
     color: white;
@@ -75,12 +70,12 @@
   .btn:active { transform: scale(0.95); }
   .btn-blue { background: #3742fa; box-shadow: 0 4px 12px rgba(55, 66, 250, 0.3); }
   .btn-outline { background: white; border: 2px solid #ccc; color: #666; box-shadow: none; }
-  .btn-danger { background: #ff4757; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3); }
 
   /* --- 特殊元件樣式 --- */
   
   /* 授權開關 */
-  .toggle-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: #fff; border-bottom: 1px solid #eee; }
+  .toggle-group { margin-top: 20px; }
+  .toggle-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; padding: 15px 10px; background: #fff; border-bottom: 1px solid #eee; }
   .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -88,10 +83,23 @@
   input:checked + .slider { background-color: #3742fa; }
   input:checked + .slider:before { transform: translateX(24px); }
 
+  /* 溫和提示警語 (預設隱藏) */
+  .warning-text {
+    font-size: 12px; color: #ff4757; background: #fff0f1; padding: 8px 10px; margin-bottom: 10px; border-radius: 6px;
+    display: none; /* 預設隱藏 */
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* 科技風清單 */
+  .tech-list { font-size: 13px; color: #555; margin-top: 10px; }
+  .tech-item { display: flex; align-items: center; margin-bottom: 8px; }
+  .tech-icon { margin-right: 8px; color: #2ed573; font-weight: bold; }
+  .hash-code { font-family: monospace; font-size: 10px; color: #aaa; margin-top: 15px; word-break: break-all; }
+
   /* 狀態圖示 */
-  .icon-big { font-size: 64px; margin-top: 40px; margin-bottom: 20px; text-align: center; display: block; }
+  .icon-big { font-size: 64px; margin-top: 30px; margin-bottom: 20px; text-align: center; display: block; }
   
-  /* 彈出層 (解釋與人工複核) */
+  /* 彈出層 */
   .layer {
     position: absolute; bottom: 0; left: 0; width: 100%; height: 85%;
     background: white; border-radius: 30px 30px 0 0;
@@ -107,23 +115,13 @@
   .bar-bg { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 5px; width: 0; transition: width 1s ease 0.5s; }
 
-  /* --- 報告用控制台 (Demo Controls) --- */
-  .demo-controls {
-    margin-top: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 12px;
-    display: flex;
-    gap: 10px;
-  }
-  .ctrl-btn {
-    background: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; color: #333;
-    transition: 0.2s;
-  }
+  /* 控制台 */
+  .demo-controls { margin-top: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 12px; display: flex; gap: 10px; }
+  .ctrl-btn { background: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; color: #333; transition: 0.2s; }
   .ctrl-btn:hover { background: #eee; }
   .ctrl-label { color: #aaa; font-size: 12px; margin-bottom: 5px; text-align: center; }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
@@ -133,28 +131,35 @@
   <div class="screen active" id="screen-auth">
     <div class="icon-big">🔒</div>
     <h1>數據授權請求</h1>
-    <p>為了精準評估您的健康風險，AI 需要存取以下數據。您擁有完整的數據主權。</p>
+    <p>AI 需要存取數據以精準評估風險。您擁有完整的數據自主權。</p>
     
-    <div style="margin-top: 20px;">
+    <div class="toggle-group">
       <div class="toggle-item">
         <span>🧬 基因檢測報告 (23andMe)</span>
         <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
       </div>
+      
       <div class="toggle-item">
         <span>⌚ Apple Watch 運動數據</span>
         <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
       </div>
-      <div class="toggle-item">
+
+      <div class="toggle-item" style="border-bottom:none;">
         <span>🏥 過去 3 年就醫紀錄</span>
-        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        <label class="switch"><input type="checkbox" id="medical-switch" checked onchange="toggleWarning()"><span class="slider"></span></label>
       </div>
+      <div class="warning-text" id="medical-warning">
+        ⚠️ 關閉此項將無法使用「免收據秒賠」，後續理賠需人工審核（約 3-5 工作天）。
+      </div>
+      <div style="height: 1px; background: #eee; width: 100%;"></div>
+
     </div>
 
-    <p style="font-size: 12px; margin-top: 10px; color: #3742fa;">
-      <span style="font-size: 16px;">🛡️</span> RegTech 監控中：<br>您的數據僅用於本次核保，不會被出售。
+    <p style="font-size: 12px; margin-top: 20px; color: #3742fa;">
+      <span style="font-size: 16px;">🛡️</span> RegTech 監控中：<br>數據傳輸全程加密 (AES-256)
     </p>
 
-    <button class="btn btn-blue" onclick="alert('模擬：數據已加密上傳！')">確認授權並分析</button>
+    <button class="btn btn-blue" onclick="alert('模擬：設定已更新！')">確認並繼續</button>
   </div>
 
 
@@ -164,21 +169,35 @@
     <p>案件編號：#2025-S999</p>
     
     <div class="card" style="border-left-color: #2ed573;">
-      <h3 style="margin:0 0 5px 0; color:#2ed573;">秒級理賠完成</h3>
-      <p style="text-align:left; margin:0; font-size:13px;">
-        入帳金額：<strong>NT$ 3,000</strong><br>
-        處理時間：<strong>0.8 秒</strong>
-      </p>
+      <h3 style="margin:0 0 10px 0; color:#2ed573;">秒級理賠完成</h3>
+      <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">NT$ 3,000</div>
+      <div style="font-size: 12px; color: #666;">處理時間：0.82 秒</div>
     </div>
 
     <div class="card" style="border-left-color: #3742fa; background: #f0f3ff;">
-      <p style="text-align:left; margin:0; font-size:13px;">
-        <strong>🤖 AI 信心指數：99.8%</strong><br>
-        數據完整且符合標準，無需人工介入。
-      </p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#333;">🤖 AI 核保透明化報告</p>
+      
+      <div class="tech-list">
+        <div class="tech-item">
+          <span class="tech-icon">✓</span> <span>診斷：急性腸胃炎 (ICD-10: K52.9)</span>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">✓</span> <span>用藥：符合臨床常規 (無濫用)</span>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">✓</span> <span>機構：台大醫院 (信任醫療網)</span>
+        </div>
+        <div class="tech-item">
+          <span class="tech-icon">✓</span> <span>個資：符合最小化蒐集原則</span>
+        </div>
+      </div>
+
+      <div class="hash-code">
+        🔒 Blockchain Hash:<br>8f434346...e9812a (不可竄改)
+      </div>
     </div>
 
-    <button class="btn btn-outline">查看詳細明細</button>
+    <button class="btn btn-outline">查看電子收據</button>
   </div>
 
 
@@ -237,24 +256,29 @@
 </div>
 
 <script>
-  // 切換畫面的功能
   function showScreen(screenId) {
-    // 1. 隱藏所有畫面
     document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.layer').forEach(el => el.classList.remove('show'));
-    
-    // 2. 顯示指定畫面
     document.getElementById(screenId).classList.add('active');
   }
 
-  // 打開解釋層
   function openLayer(layerId) {
     document.getElementById(layerId).classList.add('show');
   }
 
-  // 關閉解釋層
   function closeLayer(layerId) {
     document.getElementById(layerId).classList.remove('show');
+  }
+
+  // 控制溫和提示的邏輯
+  function toggleWarning() {
+    var checkBox = document.getElementById("medical-switch");
+    var text = document.getElementById("medical-warning");
+    if (checkBox.checked == true){
+      text.style.display = "none";
+    } else {
+      text.style.display = "block";
+    }
   }
 </script>
 
