@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 保險監理原型 v2.0</title>
+<title>AI 保險監理原型 v2.1</title>
 <style>
   body {
     background-color: #2c3e50;
@@ -83,10 +83,10 @@
   input:checked + .slider { background-color: #3742fa; }
   input:checked + .slider:before { transform: translateX(24px); }
 
-  /* 溫和提示警語 (預設隱藏) */
+  /* 溫和提示警語 */
   .warning-text {
     font-size: 12px; color: #ff4757; background: #fff0f1; padding: 8px 10px; margin-bottom: 10px; border-radius: 6px;
-    display: none; /* 預設隱藏 */
+    display: none;
     animation: fadeIn 0.3s ease;
   }
 
@@ -138,12 +138,10 @@
         <span>🧬 基因檢測報告 (23andMe)</span>
         <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
       </div>
-      
       <div class="toggle-item">
         <span>⌚ Apple Watch 運動數據</span>
         <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
       </div>
-
       <div class="toggle-item" style="border-bottom:none;">
         <span>🏥 過去 3 年就醫紀錄</span>
         <label class="switch"><input type="checkbox" id="medical-switch" checked onchange="toggleWarning()"><span class="slider"></span></label>
@@ -152,7 +150,6 @@
         ⚠️ 關閉此項將無法使用「免收據秒賠」，後續理賠需人工審核（約 3-5 工作天）。
       </div>
       <div style="height: 1px; background: #eee; width: 100%;"></div>
-
     </div>
 
     <p style="font-size: 12px; margin-top: 20px; color: #3742fa;">
@@ -174,9 +171,22 @@
       <div style="font-size: 12px; color: #666;">處理時間：0.82 秒</div>
     </div>
 
-    <div class="card" style="border-left-color: #3742fa; background: #f0f3ff;">
-      <p style="margin:0 0 10px 0; font-weight:bold; color:#333;">🤖 AI 核保透明化報告</p>
-      
+    <div class="card" style="background: #f0f3ff; border-left-color: #3742fa;">
+        <p style="margin:0; font-size:13px;">
+          <strong>🤖 AI 信心指數：99.8%</strong><br>
+          本案符合自動理賠標準，資金已即時撥款至您的帳戶。
+        </p>
+    </div>
+
+    <button class="btn btn-outline" onclick="openLayer('layer-success-detail')">📄 查看詳細明細 (透明化報告)</button>
+  </div>
+
+
+  <div class="layer" id="layer-success-detail">
+    <h2 style="margin-top:0; color:#333;">🤖 AI 核保透明化報告</h2>
+    <p style="font-size:13px; color:#666;">RegTech 存證：以下是 AI 批准此理賠的判斷依據。</p>
+    
+    <div class="card" style="border-left-color: #3742fa; background: #f8f9fa;">
       <div class="tech-list">
         <div class="tech-item">
           <span class="tech-icon">✓</span> <span>診斷：急性腸胃炎 (ICD-10: K52.9)</span>
@@ -197,7 +207,7 @@
       </div>
     </div>
 
-    <button class="btn btn-outline">查看電子收據</button>
+    <button class="btn btn-outline" onclick="closeLayer('layer-success-detail')">關閉</button>
   </div>
 
 
@@ -284,3 +294,4 @@
 
 </body>
 </html>
+
